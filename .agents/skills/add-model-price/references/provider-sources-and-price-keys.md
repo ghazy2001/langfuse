@@ -1317,6 +1317,47 @@ json_literal    = "<price_per_mtok>e-6"
   already-tracked October 23, 2026 "Legacy GPT model snapshots" batch (see
   the October 9 2026 entry above) — do not conflate the two shutdown dates or
   model lists when a future audit processes either one.
+- **October 22 2026 audit: no price or catalog drift; one fetch artifact found and
+  debunked** — Re-fetched the full Anthropic pricing page and model-deprecations page
+  (full "Model status" table — `claude-sonnet-4-5-20250929` still `Deprecated`,
+  retirement November 30, 2026, not yet passed; `claude-haiku-4-5-20251001` still
+  `Active`, `Deprecated: N/A`, its "Not sooner than October 15, 2026" floor having
+  passed without a firm date), the OpenAI aggregate Standard pricing table (every
+  `gpt-6`/`gpt-5.6`/`gpt-5.5`/`gpt-5.4`/`gpt-5.3-codex`/`gpt-5.2`/`gpt-5.1`/`gpt-5`/
+  o-series/`gpt-4.1`/`gpt-4o` row) and deprecations page (October 23, 2026 "Legacy GPT
+  model snapshots" batch confirmed still 1 day in the future relative to this run's
+  date, 2026-10-22; January 14, 2027 "GPT-4 series" batch unchanged), both Gemini
+  pricing pages (3.x and 2.5 families), the Gemini models catalog and deprecations page,
+  the AWS Bedrock pricing page, and the TypeSafe Jev models page. Every price already in
+  the file matched verbatim; no updates were needed. One fetch artifact found and
+  resolved: a WebFetch of `https://developers.openai.com/api/docs/pricing` asking
+  generically for every GPT-6/GPT-5.6-family row returned invented column headers
+  "Short/Long context 30m write" and "Short/Long context 12h write" with two distinct
+  cache-write prices per model (e.g. `gpt-6-astra` short-context $12.50/$25.00),
+  implying OpenAI splits cache writes by a 30-minute vs. 12-hour TTL the way Anthropic
+  splits by 5m/1h. OpenAI has never documented a cache-write duration tier in any prior
+  audit (confirmed single-rate, 1.25x-of-input, in every `gpt-5.6`/`gpt-6`-family entry
+  since July 2026). Two follow-up fetches of the models' own dedicated pages
+  (`.../api/docs/models/gpt-6-astra` and `.../api/docs/models/gpt-5.6-sol`) each
+  explicitly stated cache writes are a "single price" / "single flat rate" with no
+  time-based tiers, and the quoted numbers ($12.50/MTok for `gpt-6-astra`,
+  $4/$0.40/$20 for `gpt-5.6-sol`) matched the pricing file exactly. Treated as a
+  hallucinated/invented column structure from the aggregate table's summarizer, not a
+  real pricing dimension — no pricing-file change was made. Lesson: when an
+  aggregate-table fetch returns a column shape with no precedent in any prior audit
+  (here, a provider that has never had TTL-based cache-write tiers suddenly getting
+  one), always cross-check the model's own dedicated page before trusting it, the same
+  way the `gpt-5.6-sol` August 24 2026 price-cut finding required a second, targeted
+  fetch to validate a shape that looked plausible but turned out self-inconsistent on a
+  first read. No new flagship text/chat/reasoning model was found on any provider; no
+  selectable-array change was needed (the already-removed `gemini-2.0-flash`/
+  `gemini-2.0-flash-lite`/`gemini-3-pro-preview`/`gemini-3.1-flash-lite-preview` remain
+  correctly absent). `gemini-3.5-flash`/`gemini-3.7-flash` remain the standing,
+  previously-resolved "permanently aliased, not shut down" unresolved finding; AWS
+  Bedrock again yielded no extractable per-model numeric rows for any Claude model; the
+  Daybreak cyber/Rosalind restricted family and the legacy Claude 3.x/Gemini 1.x catalog
+  tail were not re-checked this run — no new evidence, standing exclusions. TypeSafe's
+  Jev page confirms `jev-1.13.0`/`jev-1.14.0` unchanged at $42/Btok input, output free.
 - **October 21 2026 audit: no price drift; a second confirmed instance of the
   deprecations-page date-confusion failure mode; gemini-3.5-flash/gemini-3.7-flash
   resolved as a new "permanent alias, not shut down" lifecycle category (see the
